@@ -140,9 +140,6 @@ PHPStan можно запустить с указанием конфигурац
 vendor/bin/phpstan analyse -l 4 -c phpstan.neon src tests
 ```
 
-When using a custom project config file, you have to pass the `--level` (`-l`)
-option to `analyse` command (default value does not apply here).
-
 При использовании пользовательского файла конфигурации проекта, вы должны передать `--level` (`-l`)
 опция `analyse` (значение по умолчанию здесь не применяется).
 
