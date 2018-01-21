@@ -80,9 +80,6 @@ New extensions are becoming available on a regular basis!
 PHPStan требует PHP > = 7.0. Вы должны запустить его в среде с PHP 7.x, но фактический код может но, не обязан использовать PHP 7.x особенности. 
 (код, написанный для PHP 5.6 и более ранних версий, может работать на 7.x в основном немодифицированным.)
 
-PHPStan works best with modern object-oriented code. The more strongly-typed your code is, the more information
-you give PHPStan to work with.
-
 PHPStan лучше всего работает с современным объектно-ориентированным кодом. 
 Чем более строго типизирован ваш код, тем больше информации Вы даете PHPStan для работы.
 
@@ -104,40 +101,40 @@ Composer установит PHPStan's исполняемый файл в  его
 
 ## Первый запуск
 
-To let PHPStan analyse your codebase, you have use the `analyse` command and point it to the right directories.
+Чтобы позволить PHPStan проанализировать ваш код, вы должны использовать команду `analyse` и указать на каталоги где находится ваш код
 
-So, for example if you have your classes in directories `src` and `tests`, you can run PHPStan like this:
+Таким образом если ваши классы лежат в каталогах `src` and `tests`, вы можете запустить PHPStan вот так:
 
 ```bash
 vendor/bin/phpstan analyse src tests
 ```
 
-PHPStan will probably find some errors, but don't worry, your code might be just fine. Errors found
-on the first run tend to be:
+PHPStan, вероятно, найдет некоторые ошибки, но не волнуйтесь, ваш код может быть просто отличным. 
+Обнаружены ошибки на первом запуске, как правило:
 
-* Extra arguments passed to functions (e. g. function requires two arguments, the code passes three)
-* Extra arguments passed to print/sprintf functions (e. g. format string contains one placeholder, the code passes two values to replace)
-* Obvious errors in dead code
-* Magic behaviour that needs to be defined. See [Extensibility](#extensibility).
+* Дополнительные аргументы, передаваемые функции (например, функция требует два аргумента, код проходит три)
+* Дополнительные аргументы, передаваемые функции Print/sprintf (например, строка форматирования содержит один местозаполнитель, код передает два значения для замены)
+* Очевидные ошибки в Мертвом коде
+* Магическое поведение, которое должно быть определено. См [расширяемость] (#extensibility).
 
-After fixing the obvious mistakes in the code, look to the following section
-for all the configuration options that will bring the number of reported errors to zero
-making PHPStan suitable to run as part of your continuous integration script.
+После исправления очевидных ошибок в коде, посмотрите на следующий раздел
+для всех параметров конфигурации, которые приведут число зарегистрированных ошибок к нулю
+это делает PHPStan подходящим для запуска как части вашего сценария непрерывной интеграции.
 
-## Rule levels
+## Уровни проверок
 
-If you want to use PHPStan but your codebase isn't up to speed with strong typing
-and PHPStan's strict checks, you can choose from currently 8 levels
-(0 is the loosest and 7 is the strictest) by passing `--level` to `analyse` command. Default level is `0`.
+Если вы хотите использовать PHPStan, но вашему коду не до сильной типизации
+и строгих проверкок PHPStan, вы можете выбрать некоторые из в настоящее время 8 уровней проверки.
+(0 является самым свободным и 7 является самым строгим) путем передачи `--level` в `analyse`. Уровень по умолчанию равен "0".
 
-This feature enables incremental adoption of PHPStan checks. You can start using PHPStan
-with a lower rule level and increase it when you feel like it.
+Эта функция позволяет постепенное принятие PHPStan проверок. Вы можете начать использовать PHPStan
+с более низким уровнем правила и увеличить его, когда вы чувствуете, что это нужно.
 
-You can also use `--level max` as an alias for the highest level. This will ensure that you will always use the highest level when upgrading to new versions of PHPStan. Please note that this can create a significant obstacle when upgrading to a newer version because you might have to fix a lot of code to bring the number of errors down to zero.
+Вы также можете использовать `--level max` в качестве псевдонима для самого высокого уровня. Это гарантирует, что вы всегда будете использовать наивысший уровень при обновлении до новых версий PHPStan. Обратите внимание, что это может создать значительное препятствие при обновлении до более новой версии, поскольку может потребоваться исправить много кода, чтобы довести количество ошибок до нуля.
 
-## Configuration
+## Конфигурация
 
-Config file is passed to the `phpstan` executable with `-c` option:
+PHPStan можно запустить с указанием конфигурационного файла через опцию `-c`:
 
 ```bash
 vendor/bin/phpstan analyse -l 4 -c phpstan.neon src tests
@@ -146,20 +143,29 @@ vendor/bin/phpstan analyse -l 4 -c phpstan.neon src tests
 When using a custom project config file, you have to pass the `--level` (`-l`)
 option to `analyse` command (default value does not apply here).
 
-[NEON file format](https://ne-on.org/) is very similar to YAML.
-All the following options are part of the `parameters` section.
+При использовании пользовательского файла конфигурации проекта, вы должны передать `--level` (`-l`)
+опция `analyse` (значение по умолчанию здесь не применяется).
 
-### Autoloading
+[NEON file format](https://ne-on.org/) очень близок к YAML.
+Все перечисленные ниже параметры являются частью раздела `parameters`.
 
-PHPStan uses Composer autoloader so the easiest way how to autoload classes
-is through the `autoload`/`autoload-dev` sections in composer.json.
+### Автозагрузка
 
-#### Specify paths to scan
+PHPStan использует Composer автозагрузчик так что самый простой способ, как автозагрузку классов
+через `autoload`/`autoload-dev` разделы в composer.json.
+
+#### Определение путей сканирования
 
 If PHPStan complains about some non-existent classes and you're sure the classes
 exist in the codebase AND you don't want to use Composer autoloader for some reason,
 you can specify directories to scan and concrete files to include using
 `autoload_directories` and `autoload_files` array parameters:
+
+Если PHPStan жалуется на некоторые несуществующие классы, и вы уверены, что классы
+существует в базе кода, и вы не хотите использовать Composer autoloader по некоторым причинам,
+Вы можете указать каталоги для сканирования и конкретные файлы для включения с помощью
+`autoload_directories` and `autoload_files`:
+
 
 ```
 parameters:
@@ -171,11 +177,12 @@ parameters:
 
 `%rootDir%` is expanded to the root directory where PHPStan resides.
 
-#### Autoloading for global installation
+#### Автозагрузка для глобальной установки
 
-PHPStan supports global installation using [`composer global`](https://getcomposer.org/doc/03-cli.md#global) or via a [PHAR archive](#installation).
-In this case, it's not part of the project autoloader, but it supports autodiscovery of the Composer autoloader
-from current working directory residing in `vendor/`:
+PHPStan поддерживает глобальную установку [`composer global`](https://getcomposer.org/doc/03-cli.md#global) или [PHAR archive](#installation).
+
+В этом случае он не является частью автозагрузчика проекта, но поддерживает автозагрузку автозагрузчика композитора
+из текущего рабочего каталога, проживающего в `vendor/`:
 
 ```bash
 cd /path/to/project
