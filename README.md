@@ -245,7 +245,7 @@ parameters:
 
 ### Добавление неявно назначенных переменных в область
 
-If you use some variables from a try block in your catch blocks, set `polluteCatchScopeWithTryAssignments` boolean parameter to `true`.
+Если вы используете некоторые переменные из вашего try блока в блоке catch, установите `polluteCatchScopeWithTryAssignments` boolean параметр в `true`.
 
 ```php
 try {
@@ -261,6 +261,10 @@ If you are enumerating over all possible situations in if-elseif branches
 and PHPStan complains about undefined variables after the conditions, you can write
 an else branch with throwing an exception:
 
+Если вы перечисляете над всеми по возможности ситуациями внутри If-ElseIf ветви
+и PHPStan жалуется на неопределенные переменные после условия, вы можете написать
+ветвь Else с исключением:
+
 ```php
 if (somethingIsTrue()) {
 	$foo = true;
@@ -273,16 +277,16 @@ if (somethingIsTrue()) {
 doFoo($foo);
 ```
 
-I recommend leaving `polluteCatchScopeWithTryAssignments` set to `false` because it leads to a clearer and more maintainable code.
+Я рекомендую оставлять `polluteCatchScopeWithTryAssignments` установленным в  `false` потому что это позволит иметь более чистый и поддерживаемый код.
 
-### Custom early terminating method calls
+### Пользовательские ранние завершающие вызовы метода
 
-Previous example showed that if a condition branches end with throwing an exception, that branch does not have
-to define a variable used after the condition branches end.
+Предыдущий пример показал, что если ветви условия заканчиваются выбросом исключения, 
+эта ветвь не имеет определения переменной, используемой после окончания ветвей условия.
 
-But exceptions are not the only way how to terminate execution of a method early. Some specific method calls
-can be perceived by project developers also as early terminating - like a `redirect()` that stops execution
-by throwing an internal exception.
+Но исключения — это не единственный способ преждевременного завершения выполнения метода. 
+Некоторые конкретные вызовы методов могут быть восприняты разработчиками проекта также как раннее завершение - как `redirect()`, 
+который останавливает выполнение, выбрасывая внутреннее исключение.
 
 ```php
 if (somethingIsTrue()) {
@@ -296,7 +300,7 @@ if (somethingIsTrue()) {
 doFoo($foo);
 ```
 
-These methods can be configured by specifying a class on whose instance they are called like this:
+Эти методы можно настроить, указав класс, на экземпляре которого они вызываются так:
 
 ```
 parameters:
@@ -308,10 +312,10 @@ parameters:
 			- sendResponse
 ```
 
-### Ignore error messages with regular expresions
+### Игнорировать сообщения об ошибках с регулярными выражения
 
-If some issue in your code base is not easy to fix or just simply want to deal with it later,
-you can exclude error messages from the analysis result with regular expressions:
+Если некоторые проблемы в вашей базе кода не легко исправить или просто хотите иметь дело с ним позже,
+можно исключить сообщения об ошибках из результатов анализа с регулярными выражениями:
 
 ```
 parameters:
@@ -322,24 +326,24 @@ parameters:
 		- '#Call to an undefined method PHPUnit_Framework_MockObject_MockObject::[a-zA-Z0-9_]+\(\)#'
 ```
 
-If some of the patterns do not occur in the result anymore, PHPStan will let you know
-and you will have to remove the pattern from the configuration. You can turn off
-this behaviour by setting `reportUnmatchedIgnoredErrors` to `false` in PHPStan configuration.
+Если некоторые из шаблонов не фигурируют больше в результатах сканирования, PHPStan даст вам знать
+и вам придется удалить шаблон из конфигурации. Вы можете выключить
+Это поведение, установив `reportUnmatchedIgnoredErrors` to `false` в конфигурации PHPStan.
 
 ### Bootstrap file
 
-If you need to initialize something in PHP runtime before PHPStan runs (like your own autoloader),
-you can provide your own bootstrap file:
+Если вам нужно инициализировать что-то в PHP Runtime до PHPStan запускается (например, ваш собственный автопогрузчик),
+Вы можете предоставить свой собственный файл Bootstrap:
 
 ```
 parameters:
 	bootstrap: %rootDir%/../../../phpstan-bootstrap.php
 ```
 
-### Custom rules
+### Специальные правила
 
-PHPStan allows writing custom rules to check for specific situations in your own codebase. Your rule class
-needs to implement the `PHPStan\Rules\Rule` interface and registered as a service in the configuration file:
+PHPStan позволяет написать специальные правила для проверки специфических ситуаций в вашем коде. 
+Ваш класс правил необходимо имплементировать с интерфейсом `PHPStan\Rules\Rule` и зарегистрировать как сервис в конфигурационном файле:
 
 ```
 services:
@@ -349,14 +353,17 @@ services:
 			- phpstan.rules.rule
 ```
 
-For inspiration on how to implement a rule turn to [src/Rules](https://github.com/phpstan/phpstan/tree/master/src/Rules)
-to see a lot of built-in rules.
+Чтобы посмотреть как писать правила проверок посмотрите вот эту ссылку [src/Rules](https://github.com/phpstan/phpstan/tree/master/src/Rules)
+и вы увидите несколько готовых правил.
 
-Check out also [phpstan-strict-rules](https://github.com/phpstan/phpstan-strict-rules) repository for extra strict and opinionated rules for PHPStan!
+Также проверте [phpstan-strict-rules](https://github.com/phpstan/phpstan-strict-rules) это дополнительный репозиторий строгих и дополнительных правил для PHPStan!
 
-### Custom error formatters
+### Специальное форматирование ошибок
 
-By default, PHPStan outputs found errors into tables grouped by files to be easily human-readable. To change the output, you can use the `--errorFormat` CLI option. There's an additional built-in `raw` format with one-per-line errors intended for easy parsing. You can also create your own error formatter by implementing the `PHPStan\Command\ErrorFormatter\ErrorFormatter` interface:
+По умолчанию, PHPStan выводит ошибки в таблицы сгруппированые по файлам для наиболее удобного чтения. 
+Что-бы изменить вывод, вы можете использовать `--errorFormat` опцию командной строки. 
+Она представляет дополнительный `raw` формат с одной ошибкой на строку для легкого парсинга.
+Вы также можете создать свой формат имплементировав `PHPStan\Command\ErrorFormatter\ErrorFormatter` интерфейс:
 
 ```php
 interface ErrorFormatter
@@ -377,14 +384,14 @@ interface ErrorFormatter
 }
 ```
 
-Register the formatter in your `phpstan.neon`:
+Регистрация вашего формата в классе конфигурации `phpstan.neon`:
 
 ```
 errorFormatter.awesome:
 	class: App\PHPStan\AwesomeErrorFormatter
 ```
 
-Use the name part after `errorFormatter.` as the CLI option value:
+используйте имя вашего шаблона в командной строке вот так через параметр `errorFormatter.`:
 
 ```bash
 vendor/bin/phpstan analyse -c phpstan.neon -l 4 --errorFormat awesome src tests
