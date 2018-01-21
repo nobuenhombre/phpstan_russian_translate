@@ -193,16 +193,20 @@ If you have your dependencies installed at a different path
 or you're running PHPStan from a different directory,
 you can specify the path to the autoloader with the `--autoload-file|-a` option:
 
+Если ваши зависимости установлены по другому пути
+или вы запускаете PHPStan из другого каталога,
+Вы можете указать путь к автозагрузчику с опцией  `--autoload-file|-a`:
+
 ```bash
 phpstan analyse --autoload-file=/path/to/autoload.php src tests
 ```
 
-### Exclude files from analysis
+### Исключение файлов из анализа
 
-If your codebase contains some files that are broken on purpose
-(e. g. to test behaviour of your application on files with invalid PHP code),
-you can exclude them using the `excludes_analyse` array parameter. String at each line
-is used as a pattern for the [`fnmatch`](https://secure.php.net/manual/en/function.fnmatch.php) function.
+Если база кода содержит некоторые файлы, которые разбиты по назначению
+(т.е. для проверки поведения вашего приложения на файлах с неверным кодом PHP),
+их можно исключить с помощью параметра массива `excludes_analyse`. Строка в каждой строке
+используется в качестве шаблона для функции [`fnmatch`](https://secure.php.net/manual/en/function.fnmatch.php) .
 
 ```
 parameters:
@@ -210,10 +214,10 @@ parameters:
 		- %rootDir%/../../../tests/*/data/*
 ```
 
-### Include custom extensions
+### Анализ файлов с другим расширением
 
-If your codebase contains php files with extensions other than the standard .php extension then you can add them
-to the `fileExtensions` array parameter:
+Если ваш код содержит php файлы с расширением отличающимся от стандартного .php 
+вы можете добавить его через параметр `fileExtensions`:
 
 ```
 parameters:
@@ -223,13 +227,14 @@ parameters:
 		- inc
 ```
 
-### Universal object crates
+### Универсальные объекты
 
-Classes without predefined structure are common in PHP applications.
-They are used as universal holders of data - any property can be set and read on them. Notable examples
-include `stdClass`, `SimpleXMLElement` (these are enabled by default), objects with results of database queries etc.
-Use `universalObjectCratesClasses` array parameter to let PHPStan know which classes
-with these characteristics are used in your codebase:
+Классы без предопределенной структуры бывает присутсвуют в PHP приложениях.
+Они используются как универсальные контейнеры для данных - любое свойство может быть установлено и прочитано.
+Примеры
+`stdClass`, `SimpleXMLElement` (они включены по умолчанию), объекты с результатами запроса из базы данных и т.п.
+Используйте `universalObjectCratesClasses` параметр чтобы дать PHPStan знать какие классы
+и какие их параметры используются в вашем коде:
 
 ```
 parameters:
@@ -238,7 +243,7 @@ parameters:
 		- Ratchet\ConnectionInterface
 ```
 
-### Add non-obviously assigned variables to scope
+### Добавление неявно назначенных переменных в область
 
 If you use some variables from a try block in your catch blocks, set `polluteCatchScopeWithTryAssignments` boolean parameter to `true`.
 
